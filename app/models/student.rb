@@ -1,4 +1,5 @@
 class Student < ActiveRecord::Base
+    self.primary_key = "index_no"
     has_one :course 
     belongs_to :course
     has_many :subjects, through: :course

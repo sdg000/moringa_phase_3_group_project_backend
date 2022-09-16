@@ -71,12 +71,61 @@ class ApplicationController < Sinatra::Base
 
 
   #CREATE
+
+  #create a student
+
+  post "/create-student" do 
+    new_student = Student.create(
+      first_name: params[:first_name],
+      last_name: params[:last_name],
+      dob: params[:dob],
+      hometown: params[:hometown],
+      gpa: params[:gpa],
+      course_id: params[:course_id],
+      index_no: params[:index_no]
+    )
+    new_student.to_json
+  end
+
+
   # grade single subject (student)
 
-  # grade multiple subjects (student)
+  # UNIQUE FEATURES FOR FRONTEND GRADE FILLING:
+
+  # In index_no field : onChange, 
+  # Call function to use {value} to fetch from Student_database with
+  # index_no as parameter.  Use results to: find subjects_id
+  
+  # prefill {GRADE FORM}:
+  #   -index_no : manually filled
+  #   -academic_year : manually filled
+  #   -term : manually filled
+  #   -exams_score: manually filled
+  #   -SUBJECT - select from options and auto create/save it's
+  #     subject_id to be posted
+
+  # HINT: use useEffect conditioned onvalue of forms
+
+  post "/grade-subject" do 
+    grade_subject = Grade.create(
+      academic_year: params[:academic_year],
+      term: params[:term],
+      exams_score: params[:exams_score],
+      subject_id: params[:subject_id],
+      index_no: params[:index_no]
+    )
+    grade_subject.to_json
+  end
+
+
+
+  
 
 
 
   #UPDATE
 
+#UPDATING GRADE
+
+#UPDATING STUDENT INFO
 end
