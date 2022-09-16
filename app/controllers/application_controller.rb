@@ -24,12 +24,18 @@ class ApplicationController < Sinatra::Base
     grades.to_json
   end
 
-  # find student grade 
-  # (returns hash of specific student's grade 
-  # iterate and find specific object matchng (academic year, term, subject)
-  get "/students/:index_no/grades" do 
+  #find student grade for a subject.
+  # find student grade (filter params: index_no, academic_year, term)
+  # (returns hash of specific student's all subject grades for a specific term)
+  # In frontend, iterate and find specific object matchng ( subject)
+
+  get "/students/:index_no/:academic_year/:term/grades" do 
     student = Student.find(params[:index_no])
-    student.grades.to_json(include: :subject)
+    results = student.grades.where("academic_year is ?", "#{params[:academic_year]}")
+    final_results = results.where("term is ?", "#{params[:term]}")
+    final_results.to_json(include: :subject)
+
+
   end
 
   #find all course
@@ -53,9 +59,8 @@ class ApplicationController < Sinatra::Base
 
   # remove grade
   # STEPS: for frontend
-  # 1. fetch grades of student using index_no
-  # 2. iterate results (hash), find object matching;
-  # -academic_year, term, subject_name
+  # 1. send fetch request to  "/students/:index_no/:academic_year/:term/grades"
+  # 2. iterate results (hash), find object matching (subject_name)
   # 3 if found, save id of object as grade_id 
   # 4 send delete request to Grade class using grade_id for find.
 
@@ -99,7 +104,7 @@ class ApplicationController < Sinatra::Base
   # prefill {GRADE FORM}:
   #   -index_no : manually filled
   #   -academic_year : manually filled
-  #   -term : manually filled
+  #   -term : select from options
   #   -exams_score: manually filled
   #   -SUBJECT - select from options and auto create/save it's
   #     subject_id to be posted
@@ -117,15 +122,43 @@ class ApplicationController < Sinatra::Base
     grade_subject.to_json
   end
 
-
+# get "/findme/:name1/:name2" do
+#   "hello #{params[:name1]} #{params[:name2]}"
+# end
 
   
 
 
-
-  #UPDATE
+  #PATCH
 
 #UPDATING GRADE
 
+# STEPS: for frontend
+  # 1. send fetch request to  "/students/:index_no/:academic_year/:term/grades"
+  # 2. iterate results (hash), find object matching (subject_name)
+  # 3 if found, save id of object as grade_id 
+  # 4 send pactch request to Grade class using grade_id for find.
+
+  patch "/change-student-grade/:id" do 
+    grade = Grade.find(params[:id])
+    grade.update(
+      academic_year: params[:academic_year],
+      term: params[:term],
+      exams_score: params[:exams_score],
+      subject_id: params[:subject_id],
+      index_no: params[:index_no]
+    )
+    grade.to_json
+  end
+
+
+
+
+
+
+
 #UPDATING STUDENT INFO
+
+# update student:  not urgently required
+
 end
