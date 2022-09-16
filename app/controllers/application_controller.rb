@@ -26,9 +26,19 @@ class ApplicationController < Sinatra::Base
 
   end
 
-  # #find course and it's registered students.
-  # def "/courses"
+  #find all course
+  get "/courses" do
+    Course.all.to_json(include: :students)
+  end
 
+  # define custom method to find individual courses and it's number of registered students
+  
+
+
+
+
+
+  
   # find student(all subjects) grades for an academic year/ term
 
 
