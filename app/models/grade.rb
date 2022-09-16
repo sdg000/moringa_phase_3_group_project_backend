@@ -27,32 +27,3 @@ class Grade < ActiveRecord::Base
 
 end
 
-#creating grade
-# Grade.destroy_all
-# one = Student.first
-# one_subject1 = Student.first.subjects.first
-# Grade.create(academic_year: '2022-23', term: 1, exams_score: 80, subject_id: one_subject1.id, index_no: one.index_no)
-
-# two = Student.second
-# second_subject = two.subjects.second
-# Grade.create(academic_year: '2019-20', term: 1, exams_score: 84, subject_id: second_subject.id, index_no: two.index_no)
-
-
-# three = Student.third
-# third_subject = three.subjects.third
-# Grade.create(academic_year: '2019-20', term: 1, exams_score: 84, subject_id: third_subject.id, index_no: three.index_no)
-
-# fourth_subject = three.subjects.fourth
-# Grade.create(academic_year: '2019-20', term: 1, exams_score: 60, subject_id: fourth_subject.id, index_no: three.index_no)
-
-# subject = three.subjects.first
-# Grade.create(academic_year: '2021-22', term: 1, exams_score: 60, subject_id: subject.id, index_no: three.index_no)
-
-# subject5 = three.subjects.fifth
-# Grade.create(academic_year: '2021-22', term: 3, exams_score: 50, subject_id: subject5.id, index_no: three.index_no)
-
-# subject7 = Student.third.subjects.second
-# Grade.create(academic_year: '2021-22', term: 1, exams_score: 20, subject_id: subject7.id, index_no: three.index_no)
-
-# subject8 = Student.third.subjects.last
-# Grade.create(academic_year: '2019-20', term: 1, exams_score: 90, subject_id: subject8.id, index_no: three.index_no)
