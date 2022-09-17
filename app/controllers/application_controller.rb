@@ -29,12 +29,23 @@ class ApplicationController < Sinatra::Base
   # (returns hash of specific student's all subject grades for a specific term)
   # In frontend, iterate and find specific object matchng ( subject)
 
-  get "/students/:index_no/:academic_year/:term/grades" do 
-    student = Student.find(params[:index_no])
-    results = student.grades.where("academic_year is ?", "#{params[:academic_year]}")
-    final_results = results.where("term is ?", "#{params[:term]}")
-    final_results.to_json(include: :subject)
+  get "/students/:index_no/:academic_year/:term/:subject/grades" do 
+    search_subject = "#{params[:subject]}"
+    search_subject = search_subject.to_s
 
+    student_subjects = Student.find(params[:index_no]).subjects
+    target = student_subjects.each.find do |item|
+      item.subject_name.downcase == search_subject.downcase
+    end
+    subject_id = "#{target.id}"
+
+
+
+    student = Student.find(params[:index_no])
+    year_results = student.grades.where("academic_year is ?", "#{params[:academic_year]}")
+    term_results = year_results.where("term is ?", "#{params[:term]}")
+    
+    subject_score = term_results.where("subject_id is ?", subject_id).to_json
 
   end
 
