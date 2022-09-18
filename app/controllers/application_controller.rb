@@ -12,6 +12,12 @@ class ApplicationController < Sinatra::Base
     Student.all.to_json
   end
 
+    #find all course
+  get "/courses" do
+    Course.all.to_json(include: :students)
+  end
+  
+
   # find a student / course / subjects by index_no:
   get "/students/:index_no" do 
     student = Student.find(params[:index_no])
@@ -24,24 +30,14 @@ class ApplicationController < Sinatra::Base
     grades.to_json
   end
 
-  #find student grade for a subject.
-  # find student grade (filter params: index_no, academic_year, term)
-  # (returns hash of specific student's all subject grades for a specific term)
-  # In frontend, iterate and find specific object matchng ( subject)
-
+  #find INDIVIDUAL STUDENT-SUBJECT RESULT for 1 term.
   get "/students/:index_no/:academic_year/:term/:subject/grade" do 
-    # search_subject = "#{params[:subject]}"
-    # search_subject = search_subject.to_s
-
     student_subjects = Student.find(params[:index_no]).subjects
     target = student_subjects.each.find do |item|
       item.subject_name.downcase == "#{params[:subject].downcase}"
     end
     subject_id = "#{target.id}"
     subject_id
-
-    # target.to_json
-
 
     student = Student.find(params[:index_no])
     year_results = student.grades.where("academic_year is ?", "#{params[:academic_year]}")
@@ -52,14 +48,9 @@ class ApplicationController < Sinatra::Base
 
   end
 
-  #find all course
-  get "/courses" do
-    Course.all.to_json(include: :students)
-  end
 
-  # define custom method to find individual courses and it's number of registered students
 
-  # find student(all subjects) grades for an academic year/ term
+  # find student(ALL SUBJECTS) grades for a term >>>> <GetStudentTermResults/>
 
   get "/students/:index_no/:level/:academic_year/:term/grades" do 
     student = Student.find(params[:index_no])
@@ -67,6 +58,7 @@ class ApplicationController < Sinatra::Base
     term_results = year_results.where("term is ?", "#{params[:term]}").where("level is ?", "#{params[:level]}")
 
     term_results.to_json
+    # "hello"
   end
 
   #find all studens from a particular level
@@ -75,8 +67,8 @@ class ApplicationController < Sinatra::Base
     student.to_json
   end
 
-  # find subject grades for a level/class in a term
-  get "/subject-grades/:course/:subject/:level/:term" do 
+  # find CLASS SUBJECT RESULTS for 1 term, 1 level     >>>>  <GetClassTermResults/>
+  get "/class-grades/:course/:subject/:level/:term" do 
 
     courses = Course.all.each.find do |item|
       item.name.downcase == "#{params[:course].downcase}"
@@ -87,7 +79,7 @@ class ApplicationController < Sinatra::Base
     end
 
     level_grades = subject.grades.where("level is ?", params[:level]).where("term is ?", params[:term])
-    level_grades.to_json
+    level_grades.to_json(include: :subject)
 
   end
 
@@ -157,7 +149,16 @@ class ApplicationController < Sinatra::Base
 
   # HINT: use useEffect conditioned onvalue of forms
 
-  post "/grade-subject" do 
+  post "/grade-subject/:subject" do 
+
+    #INTERCEPT AND CHANGE PARAMETER: transform subject_name to subject_id to be used here
+    student_subjects = Student.find(params[:index_no]).subjects
+    target = student_subjects.each.find do |item|
+      item.subject_name.downcase == "#{params[:subject].downcase}"
+    end
+
+    params[:subject_id] = "#{target.id}"
+
     grade_subject = Grade.create(
       academic_year: params[:academic_year],
       term: params[:term],
@@ -176,15 +177,51 @@ class ApplicationController < Sinatra::Base
 
 #UPDATING GRADE
 
-# STEPS: for frontend
+# STEPS: for frontend (fetch twice) refer to 
   # 1. send fetch request to  "/students/:index_no/:academic_year/:term/grades"
   # 2. iterate results (hash), find object matching (subject_name)
   # 3 if found, save id of object as grade_id 
   # 4 send pactch request to Grade class using grade_id for find.
 
-  patch "/change-student-grade/:id" do 
-    grade = Grade.find(params[:id])
-    grade.update(
+  patch "/change-grade/:index_no/:academic_year/:level/:term/:subject" do 
+
+
+    # student_grades = Student.find(params[:index_no]).grades 
+    # year = student_grades.where("academic_year is ?", "#{params[:academic_year]}")
+    # level = year.where("level is ?", "#{params[:level]}")
+    # term = level.where("term is ?", "#{params[:term]}")
+    # subject = term.each.find do |item|
+    #   item.subject_name.downcase == "#{params[:subject].downcase}"
+    # end
+    # params[:id] = "#{subject.grade.id}"
+
+
+    student_subjects = Student.find(params[:index_no]).subjects
+    target = student_subjects.each.find do |item|
+      item.subject_name.downcase == "#{params[:subject].downcase}"
+    end
+    # target.to_json
+
+    subject_id = "#{target.id}"
+    # subject_id
+
+    student_grades = Student.find(params[:index_no]).grades 
+    # student_grades.to_json
+    grade1 = student_grades.where("academic_year is ?", "#{params[:academic_year]}").where("term is ?", "#{params[:term]}")
+    # grade1.to_json
+    # "#{ grade1.term}"
+    # level = year.where("level is ?", "#{params[:level]}")
+    # level.to_json
+    # grade1.where("term is ?", "#{params[:term]}").to_json
+
+
+    # params[:id] = "#{target_grade.id}"
+    # "#{target_grade.id}"
+    # target_grade.to_json
+
+    # grade = Grade.find("#{target_grade.id}")
+
+    grade1.update(
       academic_year: params[:academic_year],
       term: params[:term],
       exams_score: params[:exams_score],
@@ -192,7 +229,7 @@ class ApplicationController < Sinatra::Base
       index_no: params[:index_no],
       level: params[:level]
     )
-    grade.to_json
+    grade1.to_json
   end
 
 
@@ -206,3 +243,5 @@ class ApplicationController < Sinatra::Base
 # update student:  not urgently required
 
 end
+
+  # define custom method to find individual courses and it's number of registered students
