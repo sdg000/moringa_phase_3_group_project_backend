@@ -29,23 +29,26 @@ class ApplicationController < Sinatra::Base
   # (returns hash of specific student's all subject grades for a specific term)
   # In frontend, iterate and find specific object matchng ( subject)
 
-  get "/students/:index_no/:academic_year/:term/:subject/grades" do 
-    search_subject = "#{params[:subject]}"
-    search_subject = search_subject.to_s
+  get "/students/:index_no/:academic_year/:term/:subject/grade" do 
+    # search_subject = "#{params[:subject]}"
+    # search_subject = search_subject.to_s
 
     student_subjects = Student.find(params[:index_no]).subjects
     target = student_subjects.each.find do |item|
-      item.subject_name.downcase == search_subject.downcase
+      item.subject_name.downcase == "#{params[:subject].downcase}"
     end
     subject_id = "#{target.id}"
+    subject_id
 
+    # target.to_json
 
 
     student = Student.find(params[:index_no])
     year_results = student.grades.where("academic_year is ?", "#{params[:academic_year]}")
     term_results = year_results.where("term is ?", "#{params[:term]}")
     
-    subject_score = term_results.where("subject_id is ?", subject_id).to_json
+    subject_score = term_results.where("subject_id is ?", subject_id)
+    subject_score.to_json
 
   end
 
@@ -55,7 +58,38 @@ class ApplicationController < Sinatra::Base
   end
 
   # define custom method to find individual courses and it's number of registered students
+
   # find student(all subjects) grades for an academic year/ term
+
+  get "/students/:index_no/:level/:academic_year/:term/grades" do 
+    student = Student.find(params[:index_no])
+    year_results = student.grades.where("academic_year is ?", "#{params[:academic_year]}")
+    term_results = year_results.where("term is ?", "#{params[:term]}").where("level is ?", "#{params[:level]}")
+
+    term_results.to_json
+  end
+
+  #find all studens from a particular level
+  get "/studentslevel/:level" do 
+    student = Student.where("level is ?", "#{params[:level]}")
+    student.to_json
+  end
+
+  # find subject grades for a level/class in a term
+  get "/subject-grades/:course/:subject/:level/:term" do 
+
+    courses = Course.all.each.find do |item|
+      item.name.downcase == "#{params[:course].downcase}"
+    end
+
+    subject = courses.subjects.each.find do |item|
+      item.subject_name.downcase == "#{params[:subject].downcase}"
+    end
+
+    level_grades = subject.grades.where("level is ?", params[:level]).where("term is ?", params[:term])
+    level_grades.to_json
+
+  end
 
 
 
@@ -95,10 +129,11 @@ class ApplicationController < Sinatra::Base
       first_name: params[:first_name],
       last_name: params[:last_name],
       dob: params[:dob],
-      hometown: params[:hometown],
+      date_admitted: params[:date_admitted],
       gpa: params[:gpa],
       course_id: params[:course_id],
-      index_no: params[:index_no]
+      index_no: params[:index_no],
+      level: params[:level]
     )
     new_student.to_json
   end
@@ -128,14 +163,11 @@ class ApplicationController < Sinatra::Base
       term: params[:term],
       exams_score: params[:exams_score],
       subject_id: params[:subject_id],
-      index_no: params[:index_no]
+      index_no: params[:index_no],
+      level: params[:level]
     )
     grade_subject.to_json
   end
-
-# get "/findme/:name1/:name2" do
-#   "hello #{params[:name1]} #{params[:name2]}"
-# end
 
   
 
@@ -157,7 +189,8 @@ class ApplicationController < Sinatra::Base
       term: params[:term],
       exams_score: params[:exams_score],
       subject_id: params[:subject_id],
-      index_no: params[:index_no]
+      index_no: params[:index_no],
+      level: params[:level]
     )
     grade.to_json
   end

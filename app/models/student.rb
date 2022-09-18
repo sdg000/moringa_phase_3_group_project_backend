@@ -3,6 +3,7 @@ class Student < ActiveRecord::Base
     has_one :course 
     belongs_to :course
     has_many :subjects, through: :course
+    has_many :grades
     has_many :grades, through: :subjects
 
 
