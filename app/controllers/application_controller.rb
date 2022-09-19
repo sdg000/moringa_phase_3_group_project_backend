@@ -117,17 +117,30 @@ class ApplicationController < Sinatra::Base
   #create a student
 
   post "/create-student" do 
+
+    #INTERCEPT params[:course_id], transform course name to course_id for backend
+    Course.all.each.find do |item| 
+      if item.name.downcase == "#{params[:course_id].downcase}"
+        params[:course_id] = "#{item.id}"
+      end
+      # params[:course_id]
+    end
+
+
+      
     new_student = Student.create(
       first_name: params[:first_name],
       last_name: params[:last_name],
       dob: params[:dob],
-      date_admitted: params[:date_admitted],
+      date_admitted: params[:date_admitted],  
       gpa: params[:gpa],
       course_id: params[:course_id],
       index_no: params[:index_no],
       level: params[:level]
     )
     new_student.to_json
+    # params[:id]
+    
   end
 
 
