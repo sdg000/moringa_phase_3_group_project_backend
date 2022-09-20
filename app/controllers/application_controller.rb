@@ -9,7 +9,7 @@ class ApplicationController < Sinatra::Base
 
   # find all students
   get "/students" do 
-    Student.all.to_json
+    Student.all.to_json(include: :subjects)
   end
 
     #find all course
@@ -123,7 +123,6 @@ class ApplicationController < Sinatra::Base
       if item.name.downcase == "#{params[:course_id].downcase}"
         params[:course_id] = "#{item.id}"
       end
-      # params[:course_id]
     end
 
 
@@ -146,31 +145,20 @@ class ApplicationController < Sinatra::Base
 
   # grade single subject (student)
 
-  # UNIQUE FEATURES FOR FRONTEND GRADE FILLING:
-
-  # In index_no field : onChange, 
-  # Call function to use {value} to fetch from Student_database with
-  # index_no as parameter.  Use results to: find subjects_id
   
-  # prefill {GRADE FORM}:
-  #   -index_no : manually filled
-  #   -academic_year : manually filled
-  #   -term : select from options
-  #   -exams_score: manually filled
-  #   -SUBJECT - select from options and auto create/save it's
-  #     subject_id to be posted
 
-  # HINT: use useEffect conditioned onvalue of forms
-
-  post "/grade-subject/:subject" do 
+  post "/grade-subject" do 
 
     #INTERCEPT AND CHANGE PARAMETER: transform subject_name to subject_id to be used here
+
     student_subjects = Student.find(params[:index_no]).subjects
-    target = student_subjects.each.find do |item|
-      item.subject_name.downcase == "#{params[:subject].downcase}"
+    student_subjects.all.each.find do |item| 
+      if item.subject_name.downcase == "#{params[:subject_id].downcase}"
+        params[:subject_id] = "#{item.id}"
+      end
+      # params[:course_id]
     end
 
-    params[:subject_id] = "#{target.id}"
 
     grade_subject = Grade.create(
       academic_year: params[:academic_year],
