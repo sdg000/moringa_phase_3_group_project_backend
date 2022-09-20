@@ -19,7 +19,7 @@ class ApplicationController < Sinatra::Base
   
 
   # find a student / course / subjects by index_no:
-  get "/students/:index_no" do 
+  get "/student" do 
     student = Student.find(params[:index_no])
     student.to_json(include: {course: {include: :subjects}})
   end
@@ -52,13 +52,22 @@ class ApplicationController < Sinatra::Base
 
   # find student(ALL SUBJECTS) grades for a term >>>> <GetStudentTermResults/>
 
-  get "/students/:index_no/:level/:academic_year/:term/grades" do 
-    student = Student.find(params[:index_no])
-    year_results = student.grades.where("academic_year is ?", "#{params[:academic_year]}")
+  get "/getstudentgrades" do 
+    student_grades = Student.find(params[:index_no]).grades
+    year_results = student_grades.where("academic_year is ?", "#{params[:academic_year]}")
     term_results = year_results.where("term is ?", "#{params[:term]}").where("level is ?", "#{params[:level]}")
 
     term_results.to_json
-    # "hello"
+    # Student.all.to_json
+
+    # student_subjects = Student.find(params[:index_no]).subjects
+    # student_subjects.all.each.find do |item| 
+    #   if item.subject_name.downcase == "#{params[:subject_id].downcase}"
+    #     params[:subject_id] = "#{item.id}"
+    #   end
+    #   # params[:course_id]
+    # end
+
   end
 
   #find all studens from a particular level
