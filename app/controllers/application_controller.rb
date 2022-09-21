@@ -57,16 +57,8 @@ class ApplicationController < Sinatra::Base
     year_results = student_grades.where("academic_year is ?", "#{params[:academic_year]}")
     term_results = year_results.where("term is ?", "#{params[:term]}").where("level is ?", "#{params[:level]}")
 
-    term_results.to_json
-    # Student.all.to_json
+    term_results.to_json(include: :subject)
 
-    # student_subjects = Student.find(params[:index_no]).subjects
-    # student_subjects.all.each.find do |item| 
-    #   if item.subject_name.downcase == "#{params[:subject_id].downcase}"
-    #     params[:subject_id] = "#{item.id}"
-    #   end
-    #   # params[:course_id]
-    # end
 
   end
 
