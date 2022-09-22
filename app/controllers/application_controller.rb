@@ -4,7 +4,7 @@ class ApplicationController < Sinatra::Base
   #  READ
 
   get "/" do
-    { message: "Good luck with your project!!!" }.to_json
+    { message: "Welcome to your backend Application" }.to_json
   end
 
   # find all students
