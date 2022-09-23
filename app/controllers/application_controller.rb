@@ -68,7 +68,7 @@ class ApplicationController < Sinatra::Base
 
   #find all studens from a particular level
   get "/studentslevel/:level" do 
-    student = Student.all.where("level is ?", "#{params[:level]}")
+    student = Student.all.where("level is ?", '#{params[:level]}')
     student.to_json
   end
 
