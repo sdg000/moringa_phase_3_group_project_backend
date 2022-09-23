@@ -52,12 +52,15 @@ class ApplicationController < Sinatra::Base
 
   # find student(ALL SUBJECTS) grades for a term >>>> <GetStudentTermResults/>
 
-  get "/getstudentgrades/:index_no/:academic_year/:level/:term" do 
-    student_grades = Student.find(params[:index_no]).grades
-    year_results = student_grades.where("academic_year is ?", "#{params[:academic_year]}")
-    term_results = year_results.where("term is ?", "#{params[:term]}").where("level is ?", "#{params[:level]}")
+  # get "/getstudentgrades/:index_no/:academic_year/:level/:term" do 
+  get "/getstudentgrades/:index_no" do 
 
-    term_results.to_json(include: :subject)
+    student_grades = Student.find(params[:index_no]).grades
+    # year_results = student_grades.where("academic_year is ?", "#{params[:academic_year]}")
+    # term_results = year_results.where("term is ?", "#{params[:term]}").where("level is ?", "#{params[:level]}")
+
+    # term_results.to_json(include: :subject)
+    student_grades.to_json
 
 
   end
