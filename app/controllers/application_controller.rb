@@ -19,7 +19,7 @@ class ApplicationController < Sinatra::Base
   
 
   # find a student / course / subjects by index_no:
-  get "/student" do 
+  get "/student/:index_no" do 
     student = Student.find(params[:index_no])
     student.to_json(include: {course: {include: :subjects}})
   end
