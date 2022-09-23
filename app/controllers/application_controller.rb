@@ -119,11 +119,14 @@ class ApplicationController < Sinatra::Base
 
 
   delete "/deletestudents" do 
-    Student.all.destroy_all
+    students = Student.all.destroy_all
+    students.to_json
   end
 
   delete "/deletegrades" do 
-    Grade.all.destroy_all
+    grades = Grade.all.destroy_all
+    grades.to_json
+
   end
 
 
