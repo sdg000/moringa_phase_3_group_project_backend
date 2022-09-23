@@ -117,6 +117,16 @@ class ApplicationController < Sinatra::Base
 
 
 
+
+  delete "/deletestudents" do 
+    Student.all.destroy_all
+  end
+
+  delete "/deletegrades" do 
+    Grade.all.destroy_all
+  end
+
+
   #CREATE
 
   #create a student
