@@ -64,7 +64,7 @@ class ApplicationController < Sinatra::Base
     # level_results.to_json(include: :subject)
     # final = student_grades.where("level is ?", "#{params[:level]}")
     # final.to_json
-    student.grades.where("index_no = ?", "#{params[:index_no]}")
+    student.grades.where("index_no = ?", "#{params[:index_no]}").to_json
 
 
 
