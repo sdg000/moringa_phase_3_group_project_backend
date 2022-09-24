@@ -56,7 +56,7 @@ class ApplicationController < Sinatra::Base
   get "/getstudentgrades/:index_no/:academic_year/:level/:term" do 
 
     student = Student.find("#{params[:index_no]}")
-    all_grades = student.grades
+    # all_grades = student.grades
     # year_results = all_grades.where("academic_year = ?", "#{params[:academic_year]}")
     # term_results = year_results.where("term = ?", "#{params[:term]}")
     # level_results = term_results.where("level = ?", "#{params[:level]}")
@@ -64,8 +64,8 @@ class ApplicationController < Sinatra::Base
     # level_results.to_json(include: :subject)
     # final = student_grades.where("level is ?", "#{params[:level]}")
     # final.to_json
+    student.to_json
 
-    all_grades.to_json
 
 
   end
