@@ -19,7 +19,7 @@ class ApplicationController < Sinatra::Base
   
 
   # find a student / course / subjects by index_no:
-  get "/student/:index_no" do 
+  get "/students/:index_no" do 
     student = Student.find("#{params[:index_no]}")
     student.to_json(include: {course: {include: :subjects}})
   end
@@ -53,15 +53,15 @@ class ApplicationController < Sinatra::Base
   # find student(ALL SUBJECTS) grades for a term >>>> <GetStudentTermResults/>
 
   # get "/getstudentgrades/:index_no/:academic_year/:level/:term" do 
-  get "/getstudentgrades/:index_no/:level" do 
+  get "/getstudentgrades/:index_no/:academic_year/:level/:term" do 
 
-    student_grades = Student.find(params[:index_no]).grades
-    # year_results = student_grades.where("academic_year is ?", "#{params[:academic_year]}")
-    # term_results = year_results.where("term is ?", "#{params[:term]}").where("level is ?", "#{params[:level]}")
+    student_grades = Student.find("#{params[:index_no]}").grades
+    year_results = student_grades.where("academic_year = ?", "#{params[:academic_year]}")
+    term_results = year_results.where("term = ?", "#{params[:term]}").where("level = ?", "#{params[:level]}")
 
-    # term_results.to_json(include: :subject)
-    final = student_grades.where("level is ?", "#{params[:level]}")
-    final.to_json
+    term_results.to_json(include: :subject)
+    # final = student_grades.where("level is ?", "#{params[:level]}")
+    # final.to_json
 
 
   end
