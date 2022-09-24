@@ -68,7 +68,7 @@ class ApplicationController < Sinatra::Base
     year_results = all_grades.where("academic_year = ?", "#{params[:academic_year]}")
     term_results = year_results.where("term = ?", "#{params[:term]}")
     final_results = term_results.where("level = ?", "#{params[:level]}")
-    final_results.to_json
+    final_results.to_json(include: :subject)
 
 
 
